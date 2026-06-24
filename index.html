@@ -893,7 +893,7 @@
 
             let currentFailbackIndex = 0;
             let failbackTimeout = null;
-            const FAILBACK_DELAY = 8000;
+            const FAILBACK_DELAY = 6000;
             const failbackNotice = document.getElementById('failbackNotice');
 
             function showFailbackNotice(serverName) {
@@ -923,10 +923,15 @@
             function switchToNextServer() {
                 currentFailbackIndex++;
                 if (currentFailbackIndex >= failbackServers.length) {
-                    currentFailbackIndex = 0;
+                    console.error('❌ ALL SERVERS FAILED! No more servers.');
+                    clearFailbackTimer();
+                    if (hls) { hls.destroy(); hls = null; }
+                    showError('সব সার্ভার ডাউন! Refresh দিন অথবা পরে আবার চেষ্টা করুন।');
+                    playerLoader.classList.add('hide');
+                    return;
                 }
                 var nextServer = failbackServers[currentFailbackIndex];
-                console.log('🔄 Failback → ' + nextServer.name);
+                console.log('🔄 Failback → ' + nextServer.name + ' [' + (currentFailbackIndex + 1) + '/' + failbackServers.length + ']');
                 showFailbackNotice(nextServer.name);
                 loaderSub.textContent = nextServer.name;
                 barStatusText.textContent = 'FIFA 2026 • ' + nextServer.name;
@@ -1080,14 +1085,13 @@
             fullscreenBtn.addEventListener('click', () => { if (playerWrap.requestFullscreen) playerWrap.requestFullscreen(); });
             refreshBtn.addEventListener('click', function() {
                 clearFailbackTimer();
-                var fbIdx2 = 0;
-                for (var i = 0; i < failbackServers.length; i++) {
-                    if (failbackServers[i].name === barStatusText.textContent.replace('FIFA 2026 • ', '')) {
-                        fbIdx2 = i; break;
-                    }
-                }
-                currentFailbackIndex = fbIdx2;
-                currentStreamUrl = failbackServers[currentFailbackIndex].url;
+                currentFailbackIndex = 0;
+                currentStreamUrl = failbackServers[0].url;
+                barStatusText.textContent = 'FIFA 2026 • Server 1';
+                loaderSub.textContent = 'Server 1';
+                document.querySelectorAll('.ch-item').forEach(function(el) { el.classList.remove('active'); });
+                var activeEl = document.querySelector('.ch-item[data-name="Server 1"]');
+                if (activeEl) { activeEl.classList.add('active'); currentChannelId = activeEl.dataset.id; }
                 setupHls(currentStreamUrl);
             });
             video.addEventListener('play', () => { centerPlay.classList.add('hide'); updatePlayBtn(); });
@@ -1108,11 +1112,8 @@
             renderChannels('FIFA World Cup', '');
             setupHls(currentStreamUrl);
             updateMuteBtn(); updatePlayBtn();
-            console.log('🚀 GO TVS Ready | Auto Failback ON | 4 Servers | Click-to-Pause ✅');
-            console.log('📺 Server 1: toffeelive.com');
-            console.log('📺 Server 2: binge.tahmid-tvos.workers.dev');
-            console.log('📺 Server 3: 1nyaler.streamhostingcdn.top');
-            console.log('📺 Server 4: ua102.online24.pm');
+            console.log('🚀 GO TVS Ready | Simple Failback | 4 Servers | Click-to-Pause ✅');
+            console.log('📺 Server 1 → Server 2 → Server 3 → Server 4 → STOP');
             console.log('🔄 Failback Timeout: ' + (FAILBACK_DELAY/1000) + ' seconds');
         })();
     </script>
