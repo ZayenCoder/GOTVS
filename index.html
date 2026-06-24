@@ -349,6 +349,7 @@
             width: 100%;
             height: var(--video-height);
             background: #000;
+            cursor: pointer;
         }
 
         #videoPlayer {
@@ -388,6 +389,28 @@
             height: 36px;
             color: #fff;
             margin-left: 4px;
+        }
+
+        /* ==================== FAILBACK NOTICE ==================== */
+        .failback-notice {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(229, 9, 20, 0.9);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 15;
+            display: none;
+            animation: failbackFade 3s ease;
+        }
+        @keyframes failbackFade {
+            0% { opacity: 0; transform: translateY(-10px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
         }
 
         /* Loader */
@@ -735,6 +758,7 @@
                             <button type="button" class="center-play" id="centerPlay" aria-label="Play">
                                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
                             </button>
+                            <div class="failback-notice" id="failbackNotice"></div>
                             <div class="loader" id="playerLoader">
                                 <div>
                                     <div class="spinner"></div>
@@ -805,8 +829,8 @@
                   url: "https://prod-cdn01-live.toffeelive.com/live/FIFA-2026-4/0/master_2000.m3u8", logo: "" },
                 { id: "srv-football-2", slug: "football-server-2", name: "Server 2", cat: "FIFA World Cup", 
                   url: "https://binge.tahmid-tvos.workers.dev/", logo: "" },
-                { id: "srv-football-3", slug: "football-server-3", name: "Server 3", cat: "FIFA World Cup", url: "", logo: "" },
-                { id: "srv-football-4", slug: "football-server-4", name: "Server 4", cat: "FIFA World Cup", url: "", logo: "" },
+                { id: "srv-football-3", slug: "football-server-3", name: "Server 3", cat: "FIFA World Cup", url: "https://1nyaler.streamhostingcdn.top/stream/94/index.m3u8", logo: "" },
+                { id: "srv-football-4", slug: "football-server-4", name: "Server 4", cat: "FIFA World Cup", url: "https://ua102.online24.pm:8443/1101/video.m3u8?token=350B326FB34F4B8", logo: "" },
                 { id: "da8d665d", slug: "server-5", name: "Server 5", cat: "FIFA World Cup", url: "", logo: "" },
                 { id: "7b8eaed7", slug: "server-6", name: "Server 6", cat: "FIFA World Cup", url: "", logo: "" },
                 { id: "6d436258", slug: "server-7", name: "Server 7", cat: "FIFA World Cup", url: "", logo: "" },
@@ -859,6 +883,60 @@
             let currentCat = 'FIFA World Cup';
             let currentStreamUrl = channels[0].url;
 
+            // ==================== FAILBACK SYSTEM ====================
+            const failbackServers = [
+                { name: "Server 1", url: "https://prod-cdn01-live.toffeelive.com/live/FIFA-2026-4/0/master_2000.m3u8" },
+                { name: "Server 2", url: "https://binge.tahmid-tvos.workers.dev/" },
+                { name: "Server 3", url: "https://1nyaler.streamhostingcdn.top/stream/94/index.m3u8" },
+                { name: "Server 4", url: "https://ua102.online24.pm:8443/1101/video.m3u8?token=350B326FB34F4B8" }
+            ];
+
+            let currentFailbackIndex = 0;
+            let failbackTimeout = null;
+            const FAILBACK_DELAY = 8000;
+            const failbackNotice = document.getElementById('failbackNotice');
+
+            function showFailbackNotice(serverName) {
+                failbackNotice.textContent = '🔄 ' + serverName + ' - Auto Failback';
+                failbackNotice.style.display = 'block';
+                failbackNotice.style.animation = 'none';
+                failbackNotice.offsetHeight;
+                failbackNotice.style.animation = 'failbackFade 3s ease';
+                setTimeout(function() { failbackNotice.style.display = 'none'; }, 3000);
+            }
+
+            function startFailbackTimer() {
+                clearFailbackTimer();
+                failbackTimeout = setTimeout(function() {
+                    console.warn('⏰ Failback timeout! Trying next server...');
+                    switchToNextServer();
+                }, FAILBACK_DELAY);
+            }
+
+            function clearFailbackTimer() {
+                if (failbackTimeout) {
+                    clearTimeout(failbackTimeout);
+                    failbackTimeout = null;
+                }
+            }
+
+            function switchToNextServer() {
+                currentFailbackIndex++;
+                if (currentFailbackIndex >= failbackServers.length) {
+                    currentFailbackIndex = 0;
+                }
+                var nextServer = failbackServers[currentFailbackIndex];
+                console.log('🔄 Failback → ' + nextServer.name);
+                showFailbackNotice(nextServer.name);
+                loaderSub.textContent = nextServer.name;
+                barStatusText.textContent = 'FIFA 2026 • ' + nextServer.name;
+                currentStreamUrl = nextServer.url;
+                document.querySelectorAll('.ch-item').forEach(function(el) { el.classList.remove('active'); });
+                var activeEl = document.querySelector('.ch-item[data-name="' + nextServer.name + '"]');
+                if (activeEl) { activeEl.classList.add('active'); currentChannelId = activeEl.dataset.id; }
+                setupHls(nextServer.url);
+            }
+
             const noResults = document.createElement('div');
             noResults.className = 'no-results';
             noResults.textContent = 'কোনো চ্যানেল পাওয়া যায়নি';
@@ -893,7 +971,19 @@
                 document.querySelectorAll('.ch-item').forEach(el => el.classList.remove('active'));
                 const activeEl = document.querySelector(`.ch-item[data-id="${ch.id}"]`);
                 if (activeEl) activeEl.classList.add('active');
-                if (ch.url) { currentStreamUrl = ch.url; barStatusText.textContent = `FIFA 2026 • ${ch.name}`; loaderSub.textContent = ch.name; setupHls(ch.url); }
+                if (ch.url) {
+                    currentStreamUrl = ch.url;
+                    barStatusText.textContent = `FIFA 2026 • ${ch.name}`;
+                    loaderSub.textContent = ch.name;
+                    // Update failback index
+                    for (var fbIdx = 0; fbIdx < failbackServers.length; fbIdx++) {
+                        if (failbackServers[fbIdx].name === ch.name) {
+                            currentFailbackIndex = fbIdx;
+                            break;
+                        }
+                    }
+                    setupHls(ch.url);
+                }
                 else showError(`${ch.name} - স্ট্রিম URL নেই`);
                 if (window.innerWidth <= 900) closeSidebar();
             }
@@ -917,10 +1007,12 @@
                 if (!url) { showError('কোনো স্ট্রিম URL নেই'); return; }
                 if (hls) { hls.destroy(); hls = null; }
                 hideError(); showLoader('সংযোগ করা হচ্ছে...'); currentStreamUrl = url;
+                clearFailbackTimer();
+                startFailbackTimer();
                 if (video.canPlayType('application/vnd.apple.mpegurl')) {
                     video.src = url;
-                    video.addEventListener('loadedmetadata', () => { hideLoader(); qualitySelect.disabled = true; });
-                    video.addEventListener('error', () => showError('ভিডিও লোড করা যাচ্ছে না।'));
+                    video.addEventListener('loadedmetadata', () => { hideLoader(); clearFailbackTimer(); qualitySelect.disabled = true; });
+                    video.addEventListener('error', () => { showError('ভিডিও লোড করা যাচ্ছে না।'); switchToNextServer(); });
                     return;
                 }
                 if (Hls.isSupported()) {
@@ -928,6 +1020,7 @@
                     hls.loadSource(url); hls.attachMedia(video);
                     hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
                         hideLoader();
+                        clearFailbackTimer();
                         qualitySelect.innerHTML = '<option value="auto">Auto</option>';
                         if (data.levels && data.levels.length > 0) {
                             data.levels.forEach((level, i) => { qualitySelect.innerHTML += `<option value="${i}">${level.height ? level.height+'p' : 'Lv'+(i+1)}</option>`; });
@@ -938,9 +1031,21 @@
                     });
                     hls.on(Hls.Events.ERROR, function(event, data) {
                         if (data.fatal) {
-                            if (data.type === Hls.ErrorTypes.NETWORK_ERROR) { showError('নেটওয়ার্ক সমস্যা...'); hls.startLoad(); }
-                            else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) { showError('মিডিয়া এরর...'); hls.recoverMediaError(); }
-                            else { showError('স্ট্রিম লোড হয়নি।'); hls.destroy(); }
+                            if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                                showError('নেটওয়ার্ক সমস্যা → Failback...');
+                                hls.destroy();
+                                switchToNextServer();
+                            }
+                            else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+                                showError('মিডিয়া এরর → Failback...');
+                                hls.destroy();
+                                switchToNextServer();
+                            }
+                            else {
+                                showError('স্ট্রিম লোড হয়নি → Failback...');
+                                hls.destroy();
+                                switchToNextServer();
+                            }
                         }
                     });
                 } else { showError('ব্রাউজার HLS সাপোর্ট করে না।'); }
@@ -953,17 +1058,43 @@
             function updatePlayBtn() { playBtn.textContent = video.paused ? '▶' : '⏸'; }
             function updateMuteBtn() { muteBtn.textContent = video.muted ? '🔇' : '🔊'; }
 
+            // ==================== CLICK VIDEO TO PAUSE/PLAY ====================
+            playerWrap.addEventListener('click', function(e) {
+                if (e.target.closest('.center-play') || e.target.closest('.loader') || e.target.closest('.failback-notice')) return;
+                if (video.paused) {
+                    video.play().then(function() {
+                        centerPlay.classList.add('hide');
+                        updatePlayBtn();
+                    }).catch(function() {});
+                } else {
+                    video.pause();
+                    centerPlay.classList.remove('hide');
+                    updatePlayBtn();
+                }
+            });
+
             centerPlay.addEventListener('click', () => { video.play().then(() => { centerPlay.classList.add('hide'); updatePlayBtn(); }).catch(() => {}); });
-            playerLoader.addEventListener('click', () => { if (video.paused) video.play().catch(() => {}); if (hls && hls.state === Hls.States.ERROR) setupHls(currentStreamUrl); });
+            playerLoader.addEventListener('click', () => { if (video.paused) video.play().catch(() => {}); if (hls && hls.state === Hls.States.ERROR) switchToNextServer(); });
             playBtn.addEventListener('click', () => { if (video.paused) video.play().then(() => centerPlay.classList.add('hide')).catch(() => {}); else { video.pause(); centerPlay.classList.remove('hide'); } updatePlayBtn(); });
             muteBtn.addEventListener('click', () => { video.muted = !video.muted; updateMuteBtn(); });
             fullscreenBtn.addEventListener('click', () => { if (playerWrap.requestFullscreen) playerWrap.requestFullscreen(); });
-            refreshBtn.addEventListener('click', () => setupHls(currentStreamUrl));
+            refreshBtn.addEventListener('click', function() {
+                clearFailbackTimer();
+                var fbIdx2 = 0;
+                for (var i = 0; i < failbackServers.length; i++) {
+                    if (failbackServers[i].name === barStatusText.textContent.replace('FIFA 2026 • ', '')) {
+                        fbIdx2 = i; break;
+                    }
+                }
+                currentFailbackIndex = fbIdx2;
+                currentStreamUrl = failbackServers[currentFailbackIndex].url;
+                setupHls(currentStreamUrl);
+            });
             video.addEventListener('play', () => { centerPlay.classList.add('hide'); updatePlayBtn(); });
             video.addEventListener('pause', updatePlayBtn);
             video.addEventListener('volumechange', updateMuteBtn);
             video.addEventListener('waiting', () => { if (!video.paused) showLoader('বাফারিং...'); });
-            video.addEventListener('playing', () => { hideLoader(); hideError(); });
+            video.addEventListener('playing', () => { hideLoader(); hideError(); clearFailbackTimer(); });
             document.addEventListener('keydown', function(e) {
                 if (e.target.tagName === 'INPUT') return;
                 switch(e.key.toLowerCase()) {
@@ -977,7 +1108,12 @@
             renderChannels('FIFA World Cup', '');
             setupHls(currentStreamUrl);
             updateMuteBtn(); updatePlayBtn();
-            console.log('🚀 GO TVS Ready | Header ✅ | Ticker ✅ | Video: 1300x730px | Server 1 ✅ | Server 2 ✅');
+            console.log('🚀 GO TVS Ready | Auto Failback ON | 4 Servers | Click-to-Pause ✅');
+            console.log('📺 Server 1: toffeelive.com');
+            console.log('📺 Server 2: binge.tahmid-tvos.workers.dev');
+            console.log('📺 Server 3: 1nyaler.streamhostingcdn.top');
+            console.log('📺 Server 4: ua102.online24.pm');
+            console.log('🔄 Failback Timeout: ' + (FAILBACK_DELAY/1000) + ' seconds');
         })();
     </script>
 </body>
