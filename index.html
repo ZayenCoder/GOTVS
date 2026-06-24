@@ -1,123 +1,597 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>GO TVS - FIFA 2026 Live</title>
     <style>
+        :root {
+            --bg: #0a0a0a;
+            --card-bg: #1a1a1a;
+            --primary: #e50914;
+            --text: #ffffff;
+            --text-secondary: #aaaaaa;
+            --bar-bg: #111111;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            background: #000;
+            background: var(--bg);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            width: 100%;
-            max-width: 1200px;
+            font-family: 'Segoe UI', Arial, sans-serif;
             padding: 10px;
         }
-        #video {
+
+        .player-area {
             width: 100%;
-            height: auto;
-            background: #111;
-            border-radius: 5px;
+            max-width: 1000px;
         }
-        .info {
+
+        .player-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .player-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .player-wrap {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 */
+            background: #000;
+        }
+
+        #videoPlayer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        /* Center Play Button */
+        .center-play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(229, 9, 20, 0.9);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+
+        .center-play.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .center-play svg {
+            width: 36px;
+            height: 36px;
             color: #fff;
-            text-align: center;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: bold;
+            margin-left: 4px;
         }
-        .error {
-            color: #ff4444;
-            text-align: center;
-            padding: 20px;
+
+        .center-play:hover {
+            background: rgba(229, 9, 20, 1);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        /* Loader */
+        .loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            cursor: pointer;
+        }
+
+        .loader.hide {
             display: none;
-            font-size: 18px;
         }
-        .loading {
-            color: #ffcc00;
+
+        .loader > div {
             text-align: center;
-            padding: 20px;
-            font-size: 18px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loader-title {
+            color: var(--text);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .loader-sub {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        /* Player Bar */
+        .player-bar {
+            background: var(--bar-bg);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-top: 1px solid #222;
+        }
+
+        .now-playing {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .bar-live {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .bar-status-text {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .quality-select {
+            background: #222;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .action-btn {
+            background: #222;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #333;
+        }
+
+        .action-btn.primary {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Error Box */
+        .error-box {
+            background: #1a0000;
+            color: #ff4444;
+            padding: 14px 18px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+            border: 1px solid #330000;
+        }
+
+        .error-box.show {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .player-bar {
+                padding: 10px 12px;
+                gap: 8px;
+            }
+            .action-btn {
+                padding: 6px 10px;
+                font-size: 14px;
+            }
+            .center-play {
+                width: 55px;
+                height: 55px;
+            }
+            .center-play svg {
+                width: 28px;
+                height: 28px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <video id="video" controls autoplay playsinline></video>
-        <div class="info">⚽ FIFA 2026 - Live Stream</div>
-        <div class="loading" id="loading">⏳ ভিডিও লোড হচ্ছে...</div>
-        <div class="error" id="error">⚠️ ভিডিও চালানো যাচ্ছে না। স্ট্রিম চেক করুন।</div>
+    <div class="player-area">
+        <div class="player-stack">
+            <section class="player-card" id="playerCard">
+                <div class="player-wrap" id="playerWrap">
+                    <!-- ভিডিও প্লেয়ার -->
+                    <video id="videoPlayer" autoplay muted playsinline webkit-playsinline preload="auto"></video>
+
+                    <!-- সেন্টার প্লে বাটন -->
+                    <button type="button" class="center-play" id="centerPlay" aria-label="Play">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+                    </button>
+
+                    <!-- লোডার -->
+                    <div class="loader" id="playerLoader">
+                        <div>
+                            <div class="spinner"></div>
+                            <div class="loader-title">লোড হচ্ছে...</div>
+                            <div class="loader-sub" id="loaderSub">FIFA 2026 Live</div>
+                            <div class="loader-sub" style="margin-top:8px;color:var(--primary);font-weight:700;">▶ চালু না হলে এখানে ট্যাপ করুন</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- প্লেয়ার বার -->
+                <div class="player-bar" id="playerBar">
+                    <div class="now-playing" id="playerStatus">
+                        <span class="bar-live"><span class="live-dot"></span>LIVE</span>
+                        <span class="bar-status-text" id="barStatusText">FIFA 2026 • Auto</span>
+                    </div>
+                    <div class="bar-actions">
+                        <select id="qualitySelect" class="quality-select" aria-label="Quality" disabled>
+                            <option value="auto">Auto</option>
+                        </select>
+                        <button type="button" class="action-btn primary" id="playBtn" title="Play/Pause">▶</button>
+                        <button type="button" class="action-btn" id="muteBtn" title="Sound">🔊</button>
+                        <button type="button" class="action-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
+                        <button type="button" class="action-btn" id="refreshBtn" title="Refresh">⟳</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- এরর বক্স -->
+            <div class="error-box" id="errorBox">স্ট্রিম লোড হয়নি। Refresh দিন অথবা অন্য চ্যানেল চেষ্টা করুন।</div>
+        </div>
     </div>
 
+    <!-- HLS.js -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
     <script>
-        // সরাসরি M3U8 URL - কোনো akrfytv.online ছাড়াই
-        const streamUrl = 'https://prod-cdn01-live.toffeelive.com/live/FIFA-2026-4/0/master_2000.m3u8';
-        
-        const video = document.getElementById('video');
-        const loadingDiv = document.getElementById('loading');
-        const errorDiv = document.getElementById('error');
-        
-        function hideLoading() {
-            loadingDiv.style.display = 'none';
-        }
-        
-        function showError() {
-            loadingDiv.style.display = 'none';
-            errorDiv.style.display = 'block';
-        }
-        
-        // HLS.js প্লেয়ার
-        if (Hls.isSupported()) {
-            const hls = new Hls({
-                debug: false,
-                enableWorker: true,
-                lowLatencyMode: false
-            });
+        (function() {
+            // ==================== সরাসরি M3U8 URL ====================
+            const STREAM_URL = 'https://prod-cdn01-live.toffeelive.com/live/FIFA-2026-4/0/master_2000.m3u8';
             
-            hls.loadSource(streamUrl);
-            hls.attachMedia(video);
+            // ==================== DOM Elements ====================
+            const video = document.getElementById('videoPlayer');
+            const centerPlay = document.getElementById('centerPlay');
+            const playerLoader = document.getElementById('playerLoader');
+            const loaderSub = document.getElementById('loaderSub');
+            const barStatusText = document.getElementById('barStatusText');
+            const playBtn = document.getElementById('playBtn');
+            const muteBtn = document.getElementById('muteBtn');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const errorBox = document.getElementById('errorBox');
+            const qualitySelect = document.getElementById('qualitySelect');
+            const playerWrap = document.getElementById('playerWrap');
+
+            let hls = null;
+            let isPlaying = false;
+
+            // ==================== Helper Functions ====================
+            function hideLoader() {
+                playerLoader.classList.add('hide');
+                centerPlay.classList.add('hide');
+            }
+
+            function showLoader(msg) {
+                playerLoader.classList.remove('hide');
+                if (msg) loaderSub.textContent = msg;
+            }
+
+            function hideError() {
+                errorBox.classList.remove('show');
+            }
+
+            function showError(msg) {
+                errorBox.textContent = msg || 'স্ট্রিম লোড হয়নি। Refresh দিন অথবা অন্য চ্যানেল চেষ্টা করুন।';
+                errorBox.classList.add('show');
+                playerLoader.classList.add('hide');
+            }
+
+            function updatePlayBtn() {
+                playBtn.textContent = video.paused ? '▶' : '⏸';
+            }
+
+            function updateMuteBtn() {
+                muteBtn.textContent = video.muted ? '🔇' : '🔊';
+            }
+
+            // ==================== HLS Setup ====================
+            function setupHls(url) {
+                if (hls) {
+                    hls.destroy();
+                    hls = null;
+                }
+
+                hideError();
+                showLoader('সংযোগ করা হচ্ছে...');
+
+                // Native HLS (Safari/iOS)
+                if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = url;
+                    video.addEventListener('loadedmetadata', function() {
+                        hideLoader();
+                        barStatusText.textContent = 'FIFA 2026 • Native HLS';
+                        qualitySelect.disabled = true;
+                    });
+                    video.addEventListener('error', function() {
+                        showError('ভিডিও লোড করা যাচ্ছে না।');
+                    });
+                    return;
+                }
+
+                // HLS.js
+                if (Hls.isSupported()) {
+                    hls = new Hls({
+                        debug: false,
+                        enableWorker: true,
+                        lowLatencyMode: false,
+                        backBufferLength: 90
+                    });
+
+                    hls.loadSource(url);
+                    hls.attachMedia(video);
+
+                    hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
+                        console.log('✅ M3U8 লোড সফল! Levels:', data.levels.length);
+                        hideLoader();
+                        barStatusText.textContent = 'FIFA 2026 • HLS.js';
+
+                        // কোয়ালিটি অপশন যোগ করা
+                        qualitySelect.innerHTML = '<option value="auto">Auto</option>';
+                        data.levels.forEach(function(level, i) {
+                            const label = level.height ? level.height + 'p' : 'Level ' + (i + 1);
+                            qualitySelect.innerHTML += '<option value="' + i + '">' + label + '</option>';
+                        });
+                        qualitySelect.disabled = false;
+
+                        // কোয়ালিটি চেঞ্জ হ্যান্ডলার
+                        qualitySelect.onchange = function() {
+                            const val = this.value;
+                            if (val === 'auto') {
+                                hls.currentLevel = -1;
+                            } else {
+                                hls.currentLevel = parseInt(val);
+                            }
+                        };
+
+                        // অটোপ্লে
+                        video.play().catch(function() {
+                            centerPlay.classList.remove('hide');
+                        });
+                    });
+
+                    hls.on(Hls.Events.LEVEL_SWITCHED, function(event, data) {
+                        if (data.level === -1) {
+                            barStatusText.textContent = 'FIFA 2026 • Auto';
+                        } else {
+                            const height = hls.levels[data.level]?.height || '?';
+                            barStatusText.textContent = 'FIFA 2026 • ' + height + 'p';
+                        }
+                    });
+
+                    hls.on(Hls.Events.ERROR, function(event, data) {
+                        console.error('HLS Error:', data.type, data.details, data.fatal);
+                        if (data.fatal) {
+                            switch (data.type) {
+                                case Hls.ErrorTypes.NETWORK_ERROR:
+                                    showError('নেটওয়ার্ক সমস্যা। আবার চেষ্টা করা হচ্ছে...');
+                                    hls.startLoad();
+                                    break;
+                                case Hls.ErrorTypes.MEDIA_ERROR:
+                                    showError('মিডিয়া এরর। রিকভার করার চেষ্টা...');
+                                    hls.recoverMediaError();
+                                    break;
+                                default:
+                                    showError('স্ট্রিম লোড হয়নি। Refresh দিন।');
+                                    hls.destroy();
+                                    break;
+                            }
+                        }
+                    });
+                } else {
+                    showError('আপনার ব্রাউজার HLS সাপোর্ট করে না। Chrome/Firefox/Safari ব্যবহার করুন।');
+                }
+            }
+
+            // ==================== Event Listeners ====================
             
-            hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                console.log('✅ M3U8 লোড সফল!');
-                hideLoading();
-                video.play().catch(function(e) {
-                    console.log('অটোপ্লে ব্লক হয়েছে, বাটনে ক্লিক করুন');
+            // Center Play Button
+            centerPlay.addEventListener('click', function() {
+                video.play().then(function() {
+                    centerPlay.classList.add('hide');
+                    updatePlayBtn();
+                }).catch(function(e) {
+                    console.log('Play failed:', e);
                 });
             });
-            
-            hls.on(Hls.Events.ERROR, function(event, data) {
-                console.error('HLS Error:', data.type, data.details);
-                if (data.fatal) {
-                    showError();
+
+            // Loader ক্লিক = প্লে ফোর্স
+            playerLoader.addEventListener('click', function() {
+                if (video.paused) {
+                    video.play().catch(function() {});
+                }
+                if (hls && hls.state === Hls.States.ERROR) {
+                    // রিলোড
+                    setupHls(STREAM_URL);
                 }
             });
-        }
-        // Native HLS (iPhone/iPad/Safari)
-        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = streamUrl;
-            video.addEventListener('loadedmetadata', function() {
-                hideLoading();
-                video.play().catch(function(e) {
-                    console.log('অটোপ্লে ব্লক হয়েছে');
-                });
+
+            // Play/Pause Button
+            playBtn.addEventListener('click', function() {
+                if (video.paused) {
+                    video.play().then(function() {
+                        centerPlay.classList.add('hide');
+                    }).catch(function() {});
+                } else {
+                    video.pause();
+                    centerPlay.classList.remove('hide');
+                }
+                updatePlayBtn();
             });
-        }
-        // HLS সাপোর্ট নেই
-        else {
-            showError();
-            errorDiv.textContent = '⚠️ আপনার ব্রাউজার HLS সাপোর্ট করে না। Chrome/Firefox/Safari ব্যবহার করুন।';
-        }
+
+            // Mute Button
+            muteBtn.addEventListener('click', function() {
+                video.muted = !video.muted;
+                updateMuteBtn();
+            });
+
+            // Fullscreen Button
+            fullscreenBtn.addEventListener('click', function() {
+                if (playerWrap.requestFullscreen) {
+                    playerWrap.requestFullscreen();
+                } else if (playerWrap.webkitRequestFullscreen) {
+                    playerWrap.webkitRequestFullscreen();
+                } else if (playerWrap.msRequestFullscreen) {
+                    playerWrap.msRequestFullscreen();
+                }
+            });
+
+            // Refresh Button
+            refreshBtn.addEventListener('click', function() {
+                setupHls(STREAM_URL);
+            });
+
+            // Video events
+            video.addEventListener('play', function() {
+                isPlaying = true;
+                centerPlay.classList.add('hide');
+                updatePlayBtn();
+            });
+
+            video.addEventListener('pause', function() {
+                isPlaying = false;
+                updatePlayBtn();
+            });
+
+            video.addEventListener('volumechange', updateMuteBtn);
+
+            video.addEventListener('waiting', function() {
+                if (!video.paused) {
+                    showLoader('বাফারিং...');
+                }
+            });
+
+            video.addEventListener('playing', function() {
+                hideLoader();
+                hideError();
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                switch(e.key.toLowerCase()) {
+                    case ' ':
+                        e.preventDefault();
+                        playBtn.click();
+                        break;
+                    case 'f':
+                        e.preventDefault();
+                        fullscreenBtn.click();
+                        break;
+                    case 'm':
+                        e.preventDefault();
+                        muteBtn.click();
+                        break;
+                    case 'r':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            refreshBtn.click();
+                        }
+                        break;
+                }
+            });
+
+            // ==================== START ====================
+            setupHls(STREAM_URL);
+
+            // Initial button states
+            updateMuteBtn();
+            updatePlayBtn();
+
+            console.log('🚀 GO TVS Player Ready');
+            console.log('📺 Stream:', STREAM_URL);
+        })();
     </script>
 </body>
 </html>
