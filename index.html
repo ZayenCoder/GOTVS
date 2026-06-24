@@ -17,6 +17,8 @@
             --ads-width: 300px;
             --video-width: 1300px;
             --video-height: 730px;
+            --header-height: 56px;
+            --ticker-height: 36px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,8 +26,118 @@
         body {
             background: var(--bg);
             font-family: 'Segoe UI', Arial, sans-serif;
-            display: flex;
             height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==================== HEADER ==================== */
+        .header {
+            background: #0d0d0d;
+            border-bottom: 1px solid #222;
+            padding: 0 20px;
+            height: var(--header-height);
+            min-height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 150;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .logo-mark {
+            font-size: 28px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 1px;
+        }
+
+        .logo-tag {
+            font-size: 10px;
+            color: var(--primary);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-link {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 6px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            transition: all 0.2s;
+        }
+
+        .header-link:hover {
+            color: #fff;
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* ==================== TICKER ==================== */
+        .global-ticker {
+            background: #111;
+            border-bottom: 1px solid #222;
+            height: var(--ticker-height);
+            min-height: var(--ticker-height);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            z-index: 149;
+        }
+
+        .ticker-track {
+            display: flex;
+            animation: ticker-scroll 25s linear infinite;
+            white-space: nowrap;
+        }
+
+        .ticker-text {
+            color: #ccc;
+            font-size: 13px;
+            padding-right: 20px;
+        }
+
+        .ticker-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .ticker-link:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes ticker-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ==================== MAIN LAYOUT ==================== */
+        .main-layout {
+            display: flex;
+            flex: 1;
             overflow: hidden;
         }
 
@@ -36,7 +148,7 @@
             background: var(--sidebar-bg);
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 100%;
             border-right: 1px solid #222;
             z-index: 100;
             transition: transform 0.3s ease;
@@ -172,10 +284,7 @@
             flex-shrink: 0;
         }
 
-        .ch-info {
-            flex: 1;
-            min-width: 0;
-        }
+        .ch-info { flex: 1; min-width: 0; }
 
         .ch-name {
             color: #fff;
@@ -272,10 +381,7 @@
             opacity: 1;
         }
 
-        .center-play.hide {
-            opacity: 0;
-            pointer-events: none;
-        }
+        .center-play.hide { opacity: 0; pointer-events: none; }
 
         .center-play svg {
             width: 36px;
@@ -322,10 +428,7 @@
             margin-bottom: 5px;
         }
 
-        .loader-sub {
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
+        .loader-sub { color: var(--text-secondary); font-size: 13px; }
 
         /* Player Bar */
         .player-bar {
@@ -372,10 +475,7 @@
             50% { opacity: 0.3; }
         }
 
-        .bar-status-text {
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
+        .bar-status-text { color: var(--text-secondary); font-size: 13px; }
 
         .bar-actions {
             display: flex;
@@ -431,7 +531,7 @@
             width: var(--ads-width);
             min-width: var(--ads-width);
             background: #0d0d0d;
-            height: 100vh;
+            height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -467,18 +567,9 @@
             cursor: pointer;
         }
 
-        .ad-slot:hover {
-            border-color: #555;
-            color: #666;
-        }
-
-        .ad-slot.rectangle {
-            aspect-ratio: 300 / 250;
-        }
-
-        .ad-slot.vertical {
-            aspect-ratio: 160 / 600;
-        }
+        .ad-slot:hover { border-color: #555; color: #666; }
+        .ad-slot.rectangle { aspect-ratio: 300 / 250; }
+        .ad-slot.vertical { aspect-ratio: 160 / 600; }
 
         /* Sidebar Toggle (Mobile) */
         .sidebar-toggle {
@@ -533,8 +624,8 @@
         }
 
         @media (max-width: 900px) {
-            body { flex-direction: column; }
-            
+            .main-layout { flex-direction: column; }
+
             .sidebar {
                 position: fixed;
                 left: 0;
@@ -547,13 +638,9 @@
             .sidebar-close { display: block; }
             .sidebar-toggle { display: flex; align-items: center; justify-content: center; }
 
-            .ads-area {
-                display: none;
-            }
+            .ads-area { display: none; }
 
-            .main-area {
-                padding: 50px 10px 10px 10px;
-            }
+            .main-area { padding: 50px 10px 10px 10px; }
 
             :root {
                 --video-width: 100%;
@@ -570,115 +657,140 @@
                 height: auto;
                 padding-top: 56.25%;
             }
+
+            .header { padding: 0 12px; }
+            .logo-text { font-size: 16px; }
+            .logo-tag { display: none; }
+            .global-ticker { font-size: 11px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- Sidebar Toggle -->
-    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Channels">☰</button>
-
-    <!-- ==================== LEFT SIDEBAR ==================== -->
-    <div class="sidebar" id="channelSidebar">
-        <div class="sidebar-head">
-            <button type="button" class="sidebar-close" id="sidebarCloseBtn" aria-label="বন্ধ">×</button>
-            <h3>📡 চ্যানেল (81)</h3>
-            <div class="search-wrap">
-                <span class="s-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="চ্যানেল খুঁজুন...">
+    <!-- ==================== HEADER ==================== -->
+    <header class="header">
+        <a href="https://akrfytv.online" class="logo">
+            <span class="logo-mark" aria-hidden="true">⚽</span>
+            <div>
+                <div class="logo-text">GOTVS</div>
+                <div class="logo-tag">FIFA WORLDCUP LIVE</div>
             </div>
+        </a>
+        <div class="header-right">
+            <a href="https://t.me/Livegotvs" target="_blank" rel="noopener" class="header-link">📢 Telegram</a>
         </div>
-        <div class="cat-tabs" id="catTabs">
-            <button type="button" class="cat-tab active" data-cat="FIFA World Cup">FIFA World Cup</button>
-            <button type="button" class="cat-tab" data-cat="all">সব</button>
-            <button type="button" class="cat-tab" data-cat="Sports">Sports</button>
-            <button type="button" class="cat-tab" data-cat="Bangladesh">Bangladesh</button>
-            <button type="button" class="cat-tab" data-cat="Pakistan">Pakistan</button>
-            <button type="button" class="cat-tab" data-cat="Entertainment">Entertainment</button>
-            <button type="button" class="cat-tab" data-cat="Movies">Movies</button>
-            <button type="button" class="cat-tab" data-cat="Music">Music</button>
-            <button type="button" class="cat-tab" data-cat="Cartoon">Cartoon</button>
-            <button type="button" class="cat-tab" data-cat="Documentary">Documentary</button>
+    </header>
+
+    <!-- ==================== TICKER ==================== -->
+    <div class="global-ticker" id="globalTicker">
+        <div class="ticker-track" id="tickerTrack">
+            <span class="ticker-text">এই সাইটটি নষ্ট হয়ে গেলে নতুন সাইট দেওয়া হবে তার জন্য telegram এ জয়েন হয়ে থাকেন <a href="https://t.me/akrfytv" target="_blank" rel="noopener" class="ticker-link">Telegram join Now</a> &nbsp;•&nbsp; </span>
+            <span class="ticker-text">এই সাইটটি নষ্ট হয়ে গেলে নতুন সাইট দেওয়া হবে তার জন্য telegram এ জয়েন হয়ে থাকেন <a href="https://t.me/akrfytv" target="_blank" rel="noopener" class="ticker-link">Telegram join Now</a> &nbsp;•&nbsp; </span>
+            <span class="ticker-text">এই সাইটটি নষ্ট হয়ে গেলে নতুন সাইট দেওয়া হবে তার জন্য telegram এ জয়েন হয়ে থাকেন <a href="https://t.me/akrfytv" target="_blank" rel="noopener" class="ticker-link">Telegram join Now</a> &nbsp;•&nbsp; </span>
+            <span class="ticker-text">এই সাইটটি নষ্ট হয়ে গেলে নতুন সাইট দেওয়া হবে তার জন্য telegram এ জয়েন হয়ে থাকেন <a href="https://t.me/akrfytv" target="_blank" rel="noopener" class="ticker-link">Telegram join Now</a> &nbsp;•&nbsp; </span>
         </div>
-        <div class="channel-list" id="channelList"></div>
     </div>
 
-    <!-- ==================== MAIN PLAYER (CENTER) ==================== -->
-    <div class="main-area">
-        <div class="player-area">
-            <div class="player-stack">
-                <section class="player-card" id="playerCard">
-                    <div class="player-wrap" id="playerWrap">
-                        <video id="videoPlayer" autoplay muted playsinline webkit-playsinline preload="auto"></video>
-                        <button type="button" class="center-play" id="centerPlay" aria-label="Play">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
-                        </button>
-                        <div class="loader" id="playerLoader">
-                            <div>
-                                <div class="spinner"></div>
-                                <div class="loader-title">লোড হচ্ছে...</div>
-                                <div class="loader-sub" id="loaderSub">Server 1</div>
-                                <div class="loader-sub" style="margin-top:8px;color:var(--primary);font-weight:700;">▶ চালু না হলে এখানে ট্যাপ করুন</div>
+    <!-- ==================== MAIN LAYOUT ==================== -->
+    <div class="main-layout">
+
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar Toggle -->
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Channels">☰</button>
+
+        <!-- LEFT SIDEBAR -->
+        <div class="sidebar" id="channelSidebar">
+            <div class="sidebar-head">
+                <button type="button" class="sidebar-close" id="sidebarCloseBtn" aria-label="বন্ধ">×</button>
+                <h3>📡 চ্যানেল (81)</h3>
+                <div class="search-wrap">
+                    <span class="s-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="চ্যানেল খুঁজুন...">
+                </div>
+            </div>
+            <div class="cat-tabs" id="catTabs">
+                <button type="button" class="cat-tab active" data-cat="FIFA World Cup">FIFA World Cup</button>
+                <button type="button" class="cat-tab" data-cat="all">সব</button>
+                <button type="button" class="cat-tab" data-cat="Sports">Sports</button>
+                <button type="button" class="cat-tab" data-cat="Bangladesh">Bangladesh</button>
+                <button type="button" class="cat-tab" data-cat="Pakistan">Pakistan</button>
+                <button type="button" class="cat-tab" data-cat="Entertainment">Entertainment</button>
+                <button type="button" class="cat-tab" data-cat="Movies">Movies</button>
+                <button type="button" class="cat-tab" data-cat="Music">Music</button>
+                <button type="button" class="cat-tab" data-cat="Cartoon">Cartoon</button>
+                <button type="button" class="cat-tab" data-cat="Documentary">Documentary</button>
+            </div>
+            <div class="channel-list" id="channelList"></div>
+        </div>
+
+        <!-- CENTER PLAYER -->
+        <div class="main-area">
+            <div class="player-area">
+                <div class="player-stack">
+                    <section class="player-card" id="playerCard">
+                        <div class="player-wrap" id="playerWrap">
+                            <video id="videoPlayer" autoplay muted playsinline webkit-playsinline preload="auto"></video>
+                            <button type="button" class="center-play" id="centerPlay" aria-label="Play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+                            </button>
+                            <div class="loader" id="playerLoader">
+                                <div>
+                                    <div class="spinner"></div>
+                                    <div class="loader-title">লোড হচ্ছে...</div>
+                                    <div class="loader-sub" id="loaderSub">Server 1</div>
+                                    <div class="loader-sub" style="margin-top:8px;color:var(--primary);font-weight:700;">▶ চালু না হলে এখানে ট্যাপ করুন</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="player-bar" id="playerBar">
-                        <div class="now-playing" id="playerStatus">
-                            <span class="bar-live"><span class="live-dot"></span>LIVE</span>
-                            <span class="bar-status-text" id="barStatusText">FIFA 2026 • Server 1</span>
+                        <div class="player-bar" id="playerBar">
+                            <div class="now-playing" id="playerStatus">
+                                <span class="bar-live"><span class="live-dot"></span>LIVE</span>
+                                <span class="bar-status-text" id="barStatusText">FIFA 2026 • Server 1</span>
+                            </div>
+                            <div class="bar-actions">
+                                <select id="qualitySelect" class="quality-select" aria-label="Quality" disabled>
+                                    <option value="auto">Auto</option>
+                                </select>
+                                <button type="button" class="action-btn primary" id="playBtn" title="Play/Pause">▶</button>
+                                <button type="button" class="action-btn" id="muteBtn" title="Sound">🔊</button>
+                                <button type="button" class="action-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
+                                <button type="button" class="action-btn" id="refreshBtn" title="Refresh">⟳</button>
+                            </div>
                         </div>
-                        <div class="bar-actions">
-                            <select id="qualitySelect" class="quality-select" aria-label="Quality" disabled>
-                                <option value="auto">Auto</option>
-                            </select>
-                            <button type="button" class="action-btn primary" id="playBtn" title="Play/Pause">▶</button>
-                            <button type="button" class="action-btn" id="muteBtn" title="Sound">🔊</button>
-                            <button type="button" class="action-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
-                            <button type="button" class="action-btn" id="refreshBtn" title="Refresh">⟳</button>
-                        </div>
-                    </div>
-                </section>
-                <div class="error-box" id="errorBox">স্ট্রিম লোড হয়নি। Refresh দিন অথবা অন্য চ্যানেল চেষ্টা করুন।</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== RIGHT ADS AREA ==================== -->
-    <div class="ads-area" id="adsArea">
-        <div class="ads-title">📢 স্পন্সর</div>
-        
-        <!-- এড স্লট ১ - বর্গাকার -->
-        <div class="ad-slot" title="এড এখানে বসান">
-            <div>
-                <div style="font-size:32px;margin-bottom:8px;">📢</div>
-                <div>Ad 300x250</div>
+                    </section>
+                    <div class="error-box" id="errorBox">স্ট্রিম লোড হয়নি। Refresh দিন অথবা অন্য চ্যানেল চেষ্টা করুন।</div>
+                </div>
             </div>
         </div>
 
-        <!-- এড স্লট ২ - রেক্টেঙ্গেল -->
-        <div class="ad-slot rectangle" title="এড এখানে বসান">
-            <div>
-                <div style="font-size:32px;margin-bottom:8px;">📢</div>
-                <div>Ad 300x250</div>
+        <!-- RIGHT ADS AREA -->
+        <div class="ads-area" id="adsArea">
+            <div class="ads-title">📢 স্পন্সর</div>
+            <div class="ad-slot" title="এড এখানে বসান">
+                <div>
+                    <div style="font-size:32px;margin-bottom:8px;">📢</div>
+                    <div>Ad 300x250</div>
+                </div>
             </div>
-        </div>
-
-        <!-- এড স্লট ৩ - ভার্টিকেল -->
-        <div class="ad-slot vertical" title="এড এখানে বসান">
-            <div>
-                <div style="font-size:24px;margin-bottom:4px;">📢</div>
-                <div style="font-size:11px;">Ad 160x600</div>
+            <div class="ad-slot rectangle" title="এড এখানে বসান">
+                <div>
+                    <div style="font-size:32px;margin-bottom:8px;">📢</div>
+                    <div>Ad 300x250</div>
+                </div>
             </div>
-        </div>
-
-        <!-- এড স্লট ৪ -->
-        <div class="ad-slot rectangle" title="এড এখানে বসান">
-            <div>
-                <div style="font-size:32px;margin-bottom:8px;">📢</div>
-                <div>Ad 300x250</div>
+            <div class="ad-slot vertical" title="এড এখানে বসান">
+                <div>
+                    <div style="font-size:24px;margin-bottom:4px;">📢</div>
+                    <div style="font-size:11px;">Ad 160x600</div>
+                </div>
+            </div>
+            <div class="ad-slot rectangle" title="এড এখানে বসান">
+                <div>
+                    <div style="font-size:32px;margin-bottom:8px;">📢</div>
+                    <div>Ad 300x250</div>
+                </div>
             </div>
         </div>
     </div>
@@ -688,7 +800,6 @@
 
     <script>
         (function() {
-            // ==================== CHANNEL DATA ====================
             const channels = [
                 { id: "srv-football-1", slug: "football-server-1", name: "Server 1", cat: "FIFA World Cup", 
                   url: "https://prod-cdn01-live.toffeelive.com/live/FIFA-2026-4/0/master_2000.m3u8", logo: "" },
@@ -723,7 +834,6 @@
                 { id: "12452", slug: "bbc-earth", name: "BBC Earth", cat: "Documentary", url: "", logo: "https://imglink.cc/cdn/eEZmseF3Tb.jpg" }
             ];
 
-            // ==================== DOM ELEMENTS ====================
             const video = document.getElementById('videoPlayer');
             const centerPlay = document.getElementById('centerPlay');
             const playerLoader = document.getElementById('playerLoader');
@@ -748,167 +858,94 @@
             let currentChannelId = 'srv-football-1';
             let currentCat = 'FIFA World Cup';
             let currentStreamUrl = channels[0].url;
-            let currentServerName = 'Server 1';
 
-            // No results element
             const noResults = document.createElement('div');
             noResults.className = 'no-results';
             noResults.textContent = 'কোনো চ্যানেল পাওয়া যায়নি';
             channelList.appendChild(noResults);
 
-            // ==================== RENDER CHANNELS ====================
             function renderChannels(filterCat, searchQuery) {
                 channelList.querySelectorAll('.ch-item').forEach(el => el.remove());
                 noResults.style.display = 'none';
-
                 let filtered = channels;
-                if (filterCat && filterCat !== 'all') {
-                    filtered = filtered.filter(ch => ch.cat === filterCat);
-                }
+                if (filterCat && filterCat !== 'all') filtered = filtered.filter(ch => ch.cat === filterCat);
                 if (searchQuery) {
                     const q = searchQuery.toLowerCase();
                     filtered = filtered.filter(ch => ch.name.toLowerCase().includes(q) || ch.cat.toLowerCase().includes(q));
                 }
-
-                if (filtered.length === 0) {
-                    noResults.style.display = 'block';
-                    document.querySelector('.sidebar-head h3').textContent = '📡 চ্যানেল (0)';
-                    return;
-                }
-
+                if (filtered.length === 0) { noResults.style.display = 'block'; document.querySelector('.sidebar-head h3').textContent = '📡 চ্যানেল (0)'; return; }
                 filtered.forEach((ch, index) => {
                     const div = document.createElement('div');
                     div.className = 'ch-item';
                     if (ch.id === currentChannelId) div.classList.add('active');
-                    div.setAttribute('role', 'button');
-                    div.setAttribute('tabindex', '0');
-                    div.dataset.id = ch.id;
-                    div.dataset.name = ch.name;
-                    div.dataset.cat = ch.cat;
-                    div.dataset.url = ch.url;
-
+                    div.setAttribute('role', 'button'); div.setAttribute('tabindex', '0');
+                    div.dataset.id = ch.id; div.dataset.name = ch.name; div.dataset.cat = ch.cat; div.dataset.url = ch.url;
                     const logoSrc = ch.logo || 'https://placehold.co/48x48/111827/6b7280?text=TV';
-                    
-                    div.innerHTML = `
-                        <img src="${logoSrc}" alt="${ch.name}" class="ch-logo" 
-                             loading="lazy" decoding="async" 
-                             onerror="this.onerror=null;this.src='https://placehold.co/48x48/111827/6b7280?text=TV'" 
-                             draggable="false">
-                        <div class="ch-info">
-                            <div class="ch-name">${ch.name}</div>
-                            <div class="ch-cat">${ch.cat}</div>
-                        </div>
-                        <span class="ch-num">${String(index + 1).padStart(2, '0')}</span>
-                    `;
-
-                    div.addEventListener('click', function() {
-                        selectChannel(ch);
-                    });
-
+                    div.innerHTML = `<img src="${logoSrc}" alt="${ch.name}" class="ch-logo" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/48x48/111827/6b7280?text=TV'" draggable="false"><div class="ch-info"><div class="ch-name">${ch.name}</div><div class="ch-cat">${ch.cat}</div></div><span class="ch-num">${String(index+1).padStart(2,'0')}</span>`;
+                    div.addEventListener('click', () => selectChannel(ch));
                     channelList.insertBefore(div, noResults);
                 });
-
                 document.querySelector('.sidebar-head h3').textContent = `📡 চ্যানেল (${filtered.length})`;
             }
 
             function selectChannel(ch) {
                 currentChannelId = ch.id;
-                currentServerName = ch.name;
-                
                 document.querySelectorAll('.ch-item').forEach(el => el.classList.remove('active'));
                 const activeEl = document.querySelector(`.ch-item[data-id="${ch.id}"]`);
                 if (activeEl) activeEl.classList.add('active');
-
-                if (ch.url) {
-                    currentStreamUrl = ch.url;
-                    barStatusText.textContent = `FIFA 2026 • ${ch.name}`;
-                    loaderSub.textContent = ch.name;
-                    setupHls(ch.url);
-                } else {
-                    showError(`${ch.name} - স্ট্রিম URL নেই`);
-                }
-
+                if (ch.url) { currentStreamUrl = ch.url; barStatusText.textContent = `FIFA 2026 • ${ch.name}`; loaderSub.textContent = ch.name; setupHls(ch.url); }
+                else showError(`${ch.name} - স্ট্রিম URL নেই`);
                 if (window.innerWidth <= 900) closeSidebar();
             }
 
-            // ==================== SIDEBAR LOGIC ====================
-            function openSidebar() {
-                sidebar.classList.add('open');
-                sidebarOverlay.classList.add('show');
-            }
-
-            function closeSidebar() {
-                sidebar.classList.remove('open');
-                sidebarOverlay.classList.remove('show');
-            }
+            function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('show'); }
+            function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('show'); }
 
             sidebarToggle.addEventListener('click', openSidebar);
             sidebarCloseBtn.addEventListener('click', closeSidebar);
             sidebarOverlay.addEventListener('click', closeSidebar);
-
-            searchInput.addEventListener('input', function() {
-                renderChannels(currentCat, this.value);
-            });
-
+            searchInput.addEventListener('input', function() { renderChannels(currentCat, this.value); });
             catTabs.addEventListener('click', function(e) {
                 if (e.target.classList.contains('cat-tab')) {
                     document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
                     e.target.classList.add('active');
-                    currentCat = e.target.dataset.cat;
-                    searchInput.value = '';
-                    renderChannels(currentCat, '');
+                    currentCat = e.target.dataset.cat; searchInput.value = ''; renderChannels(currentCat, '');
                 }
             });
 
-            // ==================== HLS SETUP ====================
             function setupHls(url) {
                 if (!url) { showError('কোনো স্ট্রিম URL নেই'); return; }
                 if (hls) { hls.destroy(); hls = null; }
-
-                hideError();
-                showLoader('সংযোগ করা হচ্ছে...');
-                currentStreamUrl = url;
-
+                hideError(); showLoader('সংযোগ করা হচ্ছে...'); currentStreamUrl = url;
                 if (video.canPlayType('application/vnd.apple.mpegurl')) {
                     video.src = url;
                     video.addEventListener('loadedmetadata', () => { hideLoader(); qualitySelect.disabled = true; });
                     video.addEventListener('error', () => showError('ভিডিও লোড করা যাচ্ছে না।'));
                     return;
                 }
-
                 if (Hls.isSupported()) {
                     hls = new Hls({ debug: false, enableWorker: true, lowLatencyMode: false, backBufferLength: 90 });
-                    hls.loadSource(url);
-                    hls.attachMedia(video);
-
+                    hls.loadSource(url); hls.attachMedia(video);
                     hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
                         hideLoader();
                         qualitySelect.innerHTML = '<option value="auto">Auto</option>';
                         if (data.levels && data.levels.length > 0) {
-                            data.levels.forEach((level, i) => {
-                                qualitySelect.innerHTML += `<option value="${i}">${level.height ? level.height+'p' : 'Lv'+(i+1)}</option>`;
-                            });
+                            data.levels.forEach((level, i) => { qualitySelect.innerHTML += `<option value="${i}">${level.height ? level.height+'p' : 'Lv'+(i+1)}</option>`; });
                             qualitySelect.disabled = false;
                         }
-                        qualitySelect.onchange = function() {
-                            hls.currentLevel = this.value === 'auto' ? -1 : parseInt(this.value);
-                        };
+                        qualitySelect.onchange = function() { hls.currentLevel = this.value === 'auto' ? -1 : parseInt(this.value); };
                         video.play().catch(() => centerPlay.classList.remove('hide'));
                     });
-
                     hls.on(Hls.Events.ERROR, function(event, data) {
                         if (data.fatal) {
                             if (data.type === Hls.ErrorTypes.NETWORK_ERROR) { showError('নেটওয়ার্ক সমস্যা...'); hls.startLoad(); }
                             else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) { showError('মিডিয়া এরর...'); hls.recoverMediaError(); }
-                            else { showError('স্ট্রিম লোড হয়নি। অন্য সার্ভার চেষ্টা করুন।'); hls.destroy(); }
+                            else { showError('স্ট্রিম লোড হয়নি।'); hls.destroy(); }
                         }
                     });
-                } else {
-                    showError('ব্রাউজার HLS সাপোর্ট করে না।');
-                }
+                } else { showError('ব্রাউজার HLS সাপোর্ট করে না।'); }
             }
 
-            // ==================== HELPERS ====================
             function hideLoader() { playerLoader.classList.add('hide'); centerPlay.classList.add('hide'); }
             function showLoader(msg) { playerLoader.classList.remove('hide'); if (msg) loaderSub.textContent = msg; }
             function hideError() { errorBox.classList.remove('show'); }
@@ -916,19 +953,17 @@
             function updatePlayBtn() { playBtn.textContent = video.paused ? '▶' : '⏸'; }
             function updateMuteBtn() { muteBtn.textContent = video.muted ? '🔇' : '🔊'; }
 
-            // ==================== EVENT LISTENERS ====================
             centerPlay.addEventListener('click', () => { video.play().then(() => { centerPlay.classList.add('hide'); updatePlayBtn(); }).catch(() => {}); });
             playerLoader.addEventListener('click', () => { if (video.paused) video.play().catch(() => {}); if (hls && hls.state === Hls.States.ERROR) setupHls(currentStreamUrl); });
             playBtn.addEventListener('click', () => { if (video.paused) video.play().then(() => centerPlay.classList.add('hide')).catch(() => {}); else { video.pause(); centerPlay.classList.remove('hide'); } updatePlayBtn(); });
             muteBtn.addEventListener('click', () => { video.muted = !video.muted; updateMuteBtn(); });
-            fullscreenBtn.addEventListener('click', () => { if (playerWrap.requestFullscreen) playerWrap.requestFullscreen(); else if (playerWrap.webkitRequestFullscreen) playerWrap.webkitRequestFullscreen(); });
+            fullscreenBtn.addEventListener('click', () => { if (playerWrap.requestFullscreen) playerWrap.requestFullscreen(); });
             refreshBtn.addEventListener('click', () => setupHls(currentStreamUrl));
             video.addEventListener('play', () => { centerPlay.classList.add('hide'); updatePlayBtn(); });
             video.addEventListener('pause', updatePlayBtn);
             video.addEventListener('volumechange', updateMuteBtn);
             video.addEventListener('waiting', () => { if (!video.paused) showLoader('বাফারিং...'); });
             video.addEventListener('playing', () => { hideLoader(); hideError(); });
-
             document.addEventListener('keydown', function(e) {
                 if (e.target.tagName === 'INPUT') return;
                 switch(e.key.toLowerCase()) {
@@ -939,12 +974,10 @@
                 }
             });
 
-            // ==================== INIT ====================
             renderChannels('FIFA World Cup', '');
             setupHls(currentStreamUrl);
-            updateMuteBtn();
-            updatePlayBtn();
-            console.log('🚀 GO TVS Ready | Video: 1300x730px | Server 1 ✅ | Server 2 ✅');
+            updateMuteBtn(); updatePlayBtn();
+            console.log('🚀 GO TVS Ready | Header ✅ | Ticker ✅ | Video: 1300x730px | Server 1 ✅ | Server 2 ✅');
         })();
     </script>
 </body>
