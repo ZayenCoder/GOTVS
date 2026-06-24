@@ -13,7 +13,10 @@
             --text-secondary: #aaaaaa;
             --bar-bg: #111111;
             --sidebar-bg: #0d0d0d;
-            --sidebar-width: 320px;
+            --sidebar-width: 280px;
+            --ads-width: 300px;
+            --video-width: 1300px;
+            --video-height: 730px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,7 +29,7 @@
             overflow: hidden;
         }
 
-        /* ==================== SIDEBAR ==================== */
+        /* ==================== SIDEBAR (LEFT) ==================== */
         .sidebar {
             width: var(--sidebar-width);
             min-width: var(--sidebar-width);
@@ -90,11 +93,8 @@
             outline: none;
         }
 
-        .search-wrap input::placeholder {
-            color: #666;
-        }
+        .search-wrap input::placeholder { color: #666; }
 
-        /* Category Tabs */
         .cat-tabs {
             display: flex;
             flex-wrap: wrap;
@@ -121,30 +121,17 @@
             border-color: var(--primary);
         }
 
-        .cat-tab:hover {
-            background: #333;
-            color: #fff;
-        }
+        .cat-tab:hover { background: #333; color: #fff; }
 
-        /* Channel List */
         .channel-list {
             flex: 1;
             overflow-y: auto;
             padding: 8px;
         }
 
-        .channel-list::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .channel-list::-webkit-scrollbar-track {
-            background: #111;
-        }
-
-        .channel-list::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 2px;
-        }
+        .channel-list::-webkit-scrollbar { width: 4px; }
+        .channel-list::-webkit-scrollbar-track { background: #111; }
+        .channel-list::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
         .ch-item {
             display: flex;
@@ -158,9 +145,7 @@
             position: relative;
         }
 
-        .ch-item:hover {
-            background: #1a1a1a;
-        }
+        .ch-item:hover { background: #1a1a1a; }
 
         .ch-item.active {
             background: #1a0a0a;
@@ -184,6 +169,7 @@
             border-radius: 6px;
             object-fit: cover;
             background: #222;
+            flex-shrink: 0;
         }
 
         .ch-info {
@@ -200,10 +186,7 @@
             text-overflow: ellipsis;
         }
 
-        .ch-cat {
-            color: #666;
-            font-size: 11px;
-        }
+        .ch-cat { color: #666; font-size: 11px; }
 
         .ch-num {
             color: #555;
@@ -218,9 +201,10 @@
             text-align: center;
             padding: 40px 20px;
             font-size: 14px;
+            display: none;
         }
 
-        /* ==================== MAIN AREA ==================== */
+        /* ==================== MAIN AREA (CENTER) ==================== */
         .main-area {
             flex: 1;
             display: flex;
@@ -228,11 +212,14 @@
             justify-content: center;
             padding: 10px;
             overflow-y: auto;
+            min-width: 0;
         }
 
         .player-area {
-            width: 100%;
-            max-width: 1000px;
+            width: var(--video-width);
+            min-width: var(--video-width);
+            max-width: var(--video-width);
+            flex-shrink: 0;
         }
 
         .player-stack {
@@ -251,7 +238,7 @@
         .player-wrap {
             position: relative;
             width: 100%;
-            padding-top: 56.25%;
+            height: var(--video-height);
             background: #000;
         }
 
@@ -326,9 +313,7 @@
             animation: spin 0.8s linear infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .loader-title {
             color: var(--text);
@@ -427,7 +412,75 @@
             border-color: var(--primary);
         }
 
-        /* Sidebar Toggle Button */
+        /* Error Box */
+        .error-box {
+            background: #1a0000;
+            color: #ff4444;
+            padding: 14px 18px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+            border: 1px solid #330000;
+        }
+
+        .error-box.show { display: block; }
+
+        /* ==================== ADS AREA (RIGHT) ==================== */
+        .ads-area {
+            width: var(--ads-width);
+            min-width: var(--ads-width);
+            background: #0d0d0d;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px 10px;
+            gap: 20px;
+            border-left: 1px solid #222;
+            overflow-y: auto;
+        }
+
+        .ads-title {
+            color: #666;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .ad-slot {
+            width: 100%;
+            max-width: 250px;
+            aspect-ratio: 1 / 1;
+            background: #111;
+            border: 1px dashed #333;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #444;
+            font-size: 14px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .ad-slot:hover {
+            border-color: #555;
+            color: #666;
+        }
+
+        .ad-slot.rectangle {
+            aspect-ratio: 300 / 250;
+        }
+
+        .ad-slot.vertical {
+            aspect-ratio: 160 / 600;
+        }
+
+        /* Sidebar Toggle (Mobile) */
         .sidebar-toggle {
             display: none;
             position: fixed;
@@ -444,70 +497,7 @@
             cursor: pointer;
         }
 
-        /* Error Box */
-        .error-box {
-            background: #1a0000;
-            color: #ff4444;
-            padding: 14px 18px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 14px;
-            display: none;
-            border: 1px solid #330000;
-        }
-
-        .error-box.show { display: block; }
-
-        /* ==================== RESPONSIVE ==================== */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                left: 0;
-                top: 0;
-                height: 100vh;
-                transform: translateX(-100%);
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .sidebar-close {
-                display: block;
-            }
-
-            .sidebar-toggle {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .main-area {
-                padding: 10px 10px 10px 10px;
-            }
-
-            .player-bar {
-                padding: 10px 12px;
-                gap: 8px;
-            }
-
-            .action-btn {
-                padding: 6px 10px;
-                font-size: 14px;
-            }
-
-            .center-play {
-                width: 55px;
-                height: 55px;
-            }
-
-            .center-play svg {
-                width: 28px;
-                height: 28px;
-            }
-        }
-
-        /* Sidebar overlay for mobile */
+        /* Sidebar Overlay */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -519,20 +509,79 @@
             z-index: 99;
         }
 
-        .sidebar-overlay.show {
-            display: block;
+        .sidebar-overlay.show { display: block; }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1600px) {
+            :root {
+                --video-width: 900px;
+                --video-height: 506px;
+                --ads-width: 250px;
+            }
+            .ad-slot { max-width: 200px; }
+        }
+
+        @media (max-width: 1200px) {
+            :root {
+                --video-width: 700px;
+                --video-height: 394px;
+                --ads-width: 200px;
+                --sidebar-width: 250px;
+            }
+            .ad-slot { max-width: 150px; }
+            .ad-slot.vertical { display: none; }
+        }
+
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-close { display: block; }
+            .sidebar-toggle { display: flex; align-items: center; justify-content: center; }
+
+            .ads-area {
+                display: none;
+            }
+
+            .main-area {
+                padding: 50px 10px 10px 10px;
+            }
+
+            :root {
+                --video-width: 100%;
+                --video-height: auto;
+            }
+
+            .player-area {
+                width: 100%;
+                min-width: 100%;
+                max-width: 100%;
+            }
+
+            .player-wrap {
+                height: auto;
+                padding-top: 56.25%;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar Overlay (Mobile) -->
+    <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- Sidebar Toggle (Mobile) -->
+    <!-- Sidebar Toggle -->
     <button class="sidebar-toggle" id="sidebarToggle" aria-label="Channels">☰</button>
 
-    <!-- ==================== SIDEBAR ==================== -->
+    <!-- ==================== LEFT SIDEBAR ==================== -->
     <div class="sidebar" id="channelSidebar">
         <div class="sidebar-head">
             <button type="button" class="sidebar-close" id="sidebarCloseBtn" aria-label="বন্ধ">×</button>
@@ -557,7 +606,7 @@
         <div class="channel-list" id="channelList"></div>
     </div>
 
-    <!-- ==================== MAIN PLAYER ==================== -->
+    <!-- ==================== MAIN PLAYER (CENTER) ==================== -->
     <div class="main-area">
         <div class="player-area">
             <div class="player-stack">
@@ -597,6 +646,43 @@
         </div>
     </div>
 
+    <!-- ==================== RIGHT ADS AREA ==================== -->
+    <div class="ads-area" id="adsArea">
+        <div class="ads-title">📢 স্পন্সর</div>
+        
+        <!-- এড স্লট ১ - বর্গাকার -->
+        <div class="ad-slot" title="এড এখানে বসান">
+            <div>
+                <div style="font-size:32px;margin-bottom:8px;">📢</div>
+                <div>Ad 300x250</div>
+            </div>
+        </div>
+
+        <!-- এড স্লট ২ - রেক্টেঙ্গেল -->
+        <div class="ad-slot rectangle" title="এড এখানে বসান">
+            <div>
+                <div style="font-size:32px;margin-bottom:8px;">📢</div>
+                <div>Ad 300x250</div>
+            </div>
+        </div>
+
+        <!-- এড স্লট ৩ - ভার্টিকেল -->
+        <div class="ad-slot vertical" title="এড এখানে বসান">
+            <div>
+                <div style="font-size:24px;margin-bottom:4px;">📢</div>
+                <div style="font-size:11px;">Ad 160x600</div>
+            </div>
+        </div>
+
+        <!-- এড স্লট ৪ -->
+        <div class="ad-slot rectangle" title="এড এখানে বসান">
+            <div>
+                <div style="font-size:32px;margin-bottom:8px;">📢</div>
+                <div>Ad 300x250</div>
+            </div>
+        </div>
+    </div>
+
     <!-- HLS.js -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
@@ -604,55 +690,37 @@
         (function() {
             // ==================== CHANNEL DATA ====================
             const channels = [
-                // FIFA World Cup Servers
                 { id: "srv-football-1", slug: "football-server-1", name: "Server 1", cat: "FIFA World Cup", 
-                  url: "https://prod-cdn01-live.toffeelive.com/live/FIFA-2026-4/0/master_2000.m3u8",
-                  logo: "" },
+                  url: "https://prod-cdn01-live.toffeelive.com/live/FIFA-2026-4/0/master_2000.m3u8", logo: "" },
                 { id: "srv-football-2", slug: "football-server-2", name: "Server 2", cat: "FIFA World Cup", 
-                  url: "https://binge.tahmid-tvos.workers.dev/",
-                  logo: "" },
+                  url: "https://binge.tahmid-tvos.workers.dev/", logo: "" },
                 { id: "srv-football-3", slug: "football-server-3", name: "Server 3", cat: "FIFA World Cup", url: "", logo: "" },
                 { id: "srv-football-4", slug: "football-server-4", name: "Server 4", cat: "FIFA World Cup", url: "", logo: "" },
                 { id: "da8d665d", slug: "server-5", name: "Server 5", cat: "FIFA World Cup", url: "", logo: "" },
                 { id: "7b8eaed7", slug: "server-6", name: "Server 6", cat: "FIFA World Cup", url: "", logo: "" },
                 { id: "6d436258", slug: "server-7", name: "Server 7", cat: "FIFA World Cup", url: "", logo: "" },
-                // Sports
-                { id: "12460", slug: "2-tv-sports-2", name: "2 Tv Sports FIFA Worldcup Server 2", cat: "Sports", 
-                  url: "", logo: "https://stream.codecloud.bd/uploads/logos/logo_6a2bada099b77.png" },
-                { id: "12459", slug: "2-tv-sports", name: "2 Tv Sports FIFA Worldcup", cat: "Sports", 
-                  url: "", logo: "https://stream.codecloud.bd/uploads/logos/logo_6a2bad8342c69.png" },
-                { id: "12323", slug: "fox-sports-2", name: "Fox Sports 2 - (FIFA)", cat: "Sports", 
-                  url: "", logo: "https://imglink.cc/cdn/o5BoWU_BEz.png" },
+                { id: "12460", slug: "2-tv-sports-2", name: "2 Tv Sports FIFA WC Server 2", cat: "Sports", url: "", logo: "https://stream.codecloud.bd/uploads/logos/logo_6a2bada099b77.png" },
+                { id: "12459", slug: "2-tv-sports", name: "2 Tv Sports FIFA WC", cat: "Sports", url: "", logo: "https://stream.codecloud.bd/uploads/logos/logo_6a2bad8342c69.png" },
+                { id: "12323", slug: "fox-sports-2", name: "Fox Sports 2 - FIFA", cat: "Sports", url: "", logo: "https://imglink.cc/cdn/o5BoWU_BEz.png" },
                 { id: "12364", slug: "euro-tv", name: "Euro TV", cat: "Sports", url: "", logo: "https://imglink.cc/cdn/SZphbKsSMx.png" },
                 { id: "12366", slug: "star-sports-1b", name: "Star Sports 1 B", cat: "Sports", url: "", logo: "https://imglink.cc/cdn/va7WOdXDQC.jpg" },
                 { id: "12365", slug: "star-sports-1", name: "Star Sports 1", cat: "Sports", url: "", logo: "https://imglink.cc/cdn/va7WOdXDQC.jpg" },
                 { id: "12367", slug: "cricket-gold", name: "Cricket Gold", cat: "Sports", url: "", logo: "https://imglink.cc/cdn/HMfImxTUXS.jpg" },
                 { id: "12369", slug: "asports", name: "ASports", cat: "Sports", url: "", logo: "https://imglink.cc/cdn/d4W6mvjalX.png" },
-                // Bangladesh
                 { id: "12417", slug: "boishakhi-tv", name: "Boishakhi TV", cat: "Bangladesh", url: "", logo: "https://i.ibb.co.com/sptqqqj9/Boishakhi-TV.png" },
                 { id: "12420", slug: "channel-1-tv", name: "Channel 1 TV", cat: "Bangladesh", url: "", logo: "https://i.ibb.co.com/N6HbH5rH/Channel-One-TV.png" },
-                // Pakistan
                 { id: "12313", slug: "ptv-sports", name: "Ptv Sports", cat: "Pakistan", url: "", logo: "https://stream.codecloud.bd/uploads/logos/logo_6a2a3bdf4d3da.jpg" },
-                // Entertainment
                 { id: "12374", slug: "star-jalsha", name: "Star Jalsha", cat: "Entertainment", url: "", logo: "https://imglink.cc/cdn/3TXPVSGzx5.png" },
                 { id: "12379", slug: "g-series-drama", name: "G Series Drama", cat: "Entertainment", url: "", logo: "https://imglink.cc/cdn/1_dUKmt1Oe.png" },
                 { id: "12380", slug: "srk-tv", name: "SRK Tv", cat: "Entertainment", url: "", logo: "https://imglink.cc/cdn/uZtiXpPz29.png" },
-                // Movies
-                { id: "12386", slug: "south-india-movie", name: "South India Movie", cat: "Movies", url: "", logo: "https://imglink.cc/cdn/cScI5tEUjV.png" },
                 { id: "12382", slug: "goldmines-movies", name: "Goldmines Movies", cat: "Movies", url: "", logo: "https://imglink.cc/cdn/E86bN6IAxl.jpg" },
-                { id: "12381", slug: "goldmines", name: "Goldmines", cat: "Movies", url: "", logo: "https://imglink.cc/cdn/E86bN6IAxl.jpg" },
-                // Music
                 { id: "12392", slug: "9x-tashan", name: "9X Tashan", cat: "Music", url: "", logo: "https://imglink.cc/cdn/IYDn_LwwiV.png" },
                 { id: "12395", slug: "sangeet-bangla", name: "Sangeet Bangla", cat: "Music", url: "", logo: "https://imglink.cc/cdn/LmVOSdl3ku.png" },
-                // Cartoon
                 { id: "12400", slug: "motu-patlu", name: "Motu Patlu", cat: "Cartoon", url: "", logo: "https://imglink.cc/cdn/TxPUulKGQh.jpg" },
                 { id: "12403", slug: "nick-bangla", name: "Nick Bangla", cat: "Cartoon", url: "", logo: "https://imglink.cc/cdn/XRDlkFnTFb.jpg" },
                 { id: "12405", slug: "doraemon-tv", name: "Doraemon TV", cat: "Cartoon", url: "", logo: "https://imglink.cc/cdn/rmNeL8f6NR.png" },
-                { id: "12408", slug: "cartoon-network", name: "Cartoon Network", cat: "Cartoon", url: "", logo: "https://imglink.cc/cdn/48br-Lpr61.png" },
-                // Documentary
                 { id: "12451", slug: "adventure-earth", name: "Adventure Earth", cat: "Documentary", url: "", logo: "https://imglink.cc/cdn/eEZmseF3Tb.jpg" },
-                { id: "12452", slug: "bbc-earth", name: "BBC Earth", cat: "Documentary", url: "", logo: "https://imglink.cc/cdn/eEZmseF3Tb.jpg" },
-                { id: "12454", slug: "animal-planet", name: "Animal Planet", cat: "Documentary", url: "", logo: "https://imglink.cc/cdn/ebC033LNf2.png" }
+                { id: "12452", slug: "bbc-earth", name: "BBC Earth", cat: "Documentary", url: "", logo: "https://imglink.cc/cdn/eEZmseF3Tb.jpg" }
             ];
 
             // ==================== DOM ELEMENTS ====================
@@ -675,11 +743,6 @@
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
             const sidebarOverlay = document.getElementById('sidebarOverlay');
-            const noResults = document.createElement('div');
-            noResults.className = 'no-results';
-            noResults.textContent = 'কোনো চ্যানেল পাওয়া যায়নি';
-            noResults.style.display = 'none';
-            channelList.appendChild(noResults);
 
             let hls = null;
             let currentChannelId = 'srv-football-1';
@@ -687,27 +750,29 @@
             let currentStreamUrl = channels[0].url;
             let currentServerName = 'Server 1';
 
+            // No results element
+            const noResults = document.createElement('div');
+            noResults.className = 'no-results';
+            noResults.textContent = 'কোনো চ্যানেল পাওয়া যায়নি';
+            channelList.appendChild(noResults);
+
             // ==================== RENDER CHANNELS ====================
             function renderChannels(filterCat, searchQuery) {
                 channelList.querySelectorAll('.ch-item').forEach(el => el.remove());
                 noResults.style.display = 'none';
 
                 let filtered = channels;
-
                 if (filterCat && filterCat !== 'all') {
                     filtered = filtered.filter(ch => ch.cat === filterCat);
                 }
-
                 if (searchQuery) {
                     const q = searchQuery.toLowerCase();
-                    filtered = filtered.filter(ch => 
-                        ch.name.toLowerCase().includes(q) || 
-                        ch.cat.toLowerCase().includes(q)
-                    );
+                    filtered = filtered.filter(ch => ch.name.toLowerCase().includes(q) || ch.cat.toLowerCase().includes(q));
                 }
 
                 if (filtered.length === 0) {
                     noResults.style.display = 'block';
+                    document.querySelector('.sidebar-head h3').textContent = '📡 চ্যানেল (0)';
                     return;
                 }
 
@@ -743,7 +808,6 @@
                     channelList.insertBefore(div, noResults);
                 });
 
-                // Update channel count
                 document.querySelector('.sidebar-head h3').textContent = `📡 চ্যানেল (${filtered.length})`;
             }
 
@@ -751,12 +815,10 @@
                 currentChannelId = ch.id;
                 currentServerName = ch.name;
                 
-                // Update active state
                 document.querySelectorAll('.ch-item').forEach(el => el.classList.remove('active'));
                 const activeEl = document.querySelector(`.ch-item[data-id="${ch.id}"]`);
                 if (activeEl) activeEl.classList.add('active');
 
-                // Update stream if URL exists
                 if (ch.url) {
                     currentStreamUrl = ch.url;
                     barStatusText.textContent = `FIFA 2026 • ${ch.name}`;
@@ -766,10 +828,7 @@
                     showError(`${ch.name} - স্ট্রিম URL নেই`);
                 }
 
-                // Close sidebar on mobile
-                if (window.innerWidth <= 768) {
-                    closeSidebar();
-                }
+                if (window.innerWidth <= 900) closeSidebar();
             }
 
             // ==================== SIDEBAR LOGIC ====================
@@ -787,12 +846,10 @@
             sidebarCloseBtn.addEventListener('click', closeSidebar);
             sidebarOverlay.addEventListener('click', closeSidebar);
 
-            // Search
             searchInput.addEventListener('input', function() {
                 renderChannels(currentCat, this.value);
             });
 
-            // Category tabs
             catTabs.addEventListener('click', function(e) {
                 if (e.target.classList.contains('cat-tab')) {
                     document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
@@ -805,186 +862,80 @@
 
             // ==================== HLS SETUP ====================
             function setupHls(url) {
-                if (!url) {
-                    showError('কোনো স্ট্রিম URL নেই');
-                    return;
-                }
-
-                if (hls) {
-                    hls.destroy();
-                    hls = null;
-                }
+                if (!url) { showError('কোনো স্ট্রিম URL নেই'); return; }
+                if (hls) { hls.destroy(); hls = null; }
 
                 hideError();
                 showLoader('সংযোগ করা হচ্ছে...');
                 currentStreamUrl = url;
 
-                // Native HLS (Safari/iOS)
                 if (video.canPlayType('application/vnd.apple.mpegurl')) {
                     video.src = url;
-                    video.addEventListener('loadedmetadata', function() {
-                        hideLoader();
-                        qualitySelect.disabled = true;
-                    });
-                    video.addEventListener('error', function() {
-                        showError('ভিডিও লোড করা যাচ্ছে না।');
-                    });
+                    video.addEventListener('loadedmetadata', () => { hideLoader(); qualitySelect.disabled = true; });
+                    video.addEventListener('error', () => showError('ভিডিও লোড করা যাচ্ছে না।'));
                     return;
                 }
 
-                // HLS.js
                 if (Hls.isSupported()) {
-                    hls = new Hls({
-                        debug: false,
-                        enableWorker: true,
-                        lowLatencyMode: false,
-                        backBufferLength: 90
-                    });
-
+                    hls = new Hls({ debug: false, enableWorker: true, lowLatencyMode: false, backBufferLength: 90 });
                     hls.loadSource(url);
                     hls.attachMedia(video);
 
                     hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
-                        console.log('✅ M3U8 লোড সফল!');
                         hideLoader();
-
                         qualitySelect.innerHTML = '<option value="auto">Auto</option>';
                         if (data.levels && data.levels.length > 0) {
-                            data.levels.forEach(function(level, i) {
-                                const label = level.height ? level.height + 'p' : 'Level ' + (i + 1);
-                                qualitySelect.innerHTML += '<option value="' + i + '">' + label + '</option>';
+                            data.levels.forEach((level, i) => {
+                                qualitySelect.innerHTML += `<option value="${i}">${level.height ? level.height+'p' : 'Lv'+(i+1)}</option>`;
                             });
                             qualitySelect.disabled = false;
                         }
-
                         qualitySelect.onchange = function() {
-                            const val = this.value;
-                            hls.currentLevel = val === 'auto' ? -1 : parseInt(val);
+                            hls.currentLevel = this.value === 'auto' ? -1 : parseInt(this.value);
                         };
-
-                        video.play().catch(function() {
-                            centerPlay.classList.remove('hide');
-                        });
+                        video.play().catch(() => centerPlay.classList.remove('hide'));
                     });
 
                     hls.on(Hls.Events.ERROR, function(event, data) {
-                        console.error('HLS Error:', data.type, data.fatal);
                         if (data.fatal) {
-                            switch (data.type) {
-                                case Hls.ErrorTypes.NETWORK_ERROR:
-                                    showError('নেটওয়ার্ক সমস্যা। আবার চেষ্টা করা হচ্ছে...');
-                                    hls.startLoad();
-                                    break;
-                                case Hls.ErrorTypes.MEDIA_ERROR:
-                                    showError('মিডিয়া এরর। রিকভার করার চেষ্টা...');
-                                    hls.recoverMediaError();
-                                    break;
-                                default:
-                                    showError('স্ট্রিম লোড হয়নি। অন্য সার্ভার চেষ্টা করুন।');
-                                    hls.destroy();
-                                    break;
-                            }
+                            if (data.type === Hls.ErrorTypes.NETWORK_ERROR) { showError('নেটওয়ার্ক সমস্যা...'); hls.startLoad(); }
+                            else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) { showError('মিডিয়া এরর...'); hls.recoverMediaError(); }
+                            else { showError('স্ট্রিম লোড হয়নি। অন্য সার্ভার চেষ্টা করুন।'); hls.destroy(); }
                         }
                     });
                 } else {
-                    showError('আপনার ব্রাউজার HLS সাপোর্ট করে না।');
+                    showError('ব্রাউজার HLS সাপোর্ট করে না।');
                 }
             }
 
             // ==================== HELPERS ====================
-            function hideLoader() {
-                playerLoader.classList.add('hide');
-                centerPlay.classList.add('hide');
-            }
-
-            function showLoader(msg) {
-                playerLoader.classList.remove('hide');
-                if (msg) loaderSub.textContent = msg;
-            }
-
-            function hideError() {
-                errorBox.classList.remove('show');
-            }
-
-            function showError(msg) {
-                errorBox.textContent = msg || 'স্ট্রিম লোড হয়নি।';
-                errorBox.classList.add('show');
-                playerLoader.classList.add('hide');
-            }
-
-            function updatePlayBtn() {
-                playBtn.textContent = video.paused ? '▶' : '⏸';
-            }
-
-            function updateMuteBtn() {
-                muteBtn.textContent = video.muted ? '🔇' : '🔊';
-            }
+            function hideLoader() { playerLoader.classList.add('hide'); centerPlay.classList.add('hide'); }
+            function showLoader(msg) { playerLoader.classList.remove('hide'); if (msg) loaderSub.textContent = msg; }
+            function hideError() { errorBox.classList.remove('show'); }
+            function showError(msg) { errorBox.textContent = msg || 'স্ট্রিম লোড হয়নি।'; errorBox.classList.add('show'); playerLoader.classList.add('hide'); }
+            function updatePlayBtn() { playBtn.textContent = video.paused ? '▶' : '⏸'; }
+            function updateMuteBtn() { muteBtn.textContent = video.muted ? '🔇' : '🔊'; }
 
             // ==================== EVENT LISTENERS ====================
-            centerPlay.addEventListener('click', function() {
-                video.play().then(() => {
-                    centerPlay.classList.add('hide');
-                    updatePlayBtn();
-                }).catch(() => {});
-            });
-
-            playerLoader.addEventListener('click', function() {
-                if (video.paused) video.play().catch(() => {});
-                if (hls && hls.state === Hls.States.ERROR) {
-                    setupHls(currentStreamUrl);
-                }
-            });
-
-            playBtn.addEventListener('click', function() {
-                if (video.paused) {
-                    video.play().then(() => centerPlay.classList.add('hide')).catch(() => {});
-                } else {
-                    video.pause();
-                    centerPlay.classList.remove('hide');
-                }
-                updatePlayBtn();
-            });
-
-            muteBtn.addEventListener('click', function() {
-                video.muted = !video.muted;
-                updateMuteBtn();
-            });
-
-            fullscreenBtn.addEventListener('click', function() {
-                if (playerWrap.requestFullscreen) playerWrap.requestFullscreen();
-                else if (playerWrap.webkitRequestFullscreen) playerWrap.webkitRequestFullscreen();
-                else if (playerWrap.msRequestFullscreen) playerWrap.msRequestFullscreen();
-            });
-
-            refreshBtn.addEventListener('click', function() {
-                setupHls(currentStreamUrl);
-            });
-
-            video.addEventListener('play', function() {
-                centerPlay.classList.add('hide');
-                updatePlayBtn();
-            });
-
+            centerPlay.addEventListener('click', () => { video.play().then(() => { centerPlay.classList.add('hide'); updatePlayBtn(); }).catch(() => {}); });
+            playerLoader.addEventListener('click', () => { if (video.paused) video.play().catch(() => {}); if (hls && hls.state === Hls.States.ERROR) setupHls(currentStreamUrl); });
+            playBtn.addEventListener('click', () => { if (video.paused) video.play().then(() => centerPlay.classList.add('hide')).catch(() => {}); else { video.pause(); centerPlay.classList.remove('hide'); } updatePlayBtn(); });
+            muteBtn.addEventListener('click', () => { video.muted = !video.muted; updateMuteBtn(); });
+            fullscreenBtn.addEventListener('click', () => { if (playerWrap.requestFullscreen) playerWrap.requestFullscreen(); else if (playerWrap.webkitRequestFullscreen) playerWrap.webkitRequestFullscreen(); });
+            refreshBtn.addEventListener('click', () => setupHls(currentStreamUrl));
+            video.addEventListener('play', () => { centerPlay.classList.add('hide'); updatePlayBtn(); });
             video.addEventListener('pause', updatePlayBtn);
             video.addEventListener('volumechange', updateMuteBtn);
+            video.addEventListener('waiting', () => { if (!video.paused) showLoader('বাফারিং...'); });
+            video.addEventListener('playing', () => { hideLoader(); hideError(); });
 
-            video.addEventListener('waiting', function() {
-                if (!video.paused) showLoader('বাফারিং...');
-            });
-
-            video.addEventListener('playing', function() {
-                hideLoader();
-                hideError();
-            });
-
-            // Keyboard shortcuts
             document.addEventListener('keydown', function(e) {
                 if (e.target.tagName === 'INPUT') return;
                 switch(e.key.toLowerCase()) {
                     case ' ': e.preventDefault(); playBtn.click(); break;
                     case 'f': e.preventDefault(); fullscreenBtn.click(); break;
                     case 'm': e.preventDefault(); muteBtn.click(); break;
-                    case 'r': if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); refreshBtn.click(); } break;
+                    case 'r': if (!e.ctrlKey) { e.preventDefault(); refreshBtn.click(); } break;
                 }
             });
 
@@ -993,10 +944,7 @@
             setupHls(currentStreamUrl);
             updateMuteBtn();
             updatePlayBtn();
-
-            console.log('🚀 GO TVS Player Ready');
-            console.log('📺 Server 1:', channels[0].url);
-            console.log('📺 Server 2:', channels[1].url);
+            console.log('🚀 GO TVS Ready | Video: 1300x730px | Server 1 ✅ | Server 2 ✅');
         })();
     </script>
 </body>
