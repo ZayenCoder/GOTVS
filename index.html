@@ -704,7 +704,7 @@
         <div class="sidebar" id="channelSidebar">
             <div class="sidebar-head">
                 <button type="button" class="sidebar-close" id="sidebarCloseBtn" aria-label="বন্ধ">×</button>
-                <h3>📡 চ্যানেল (81)</h3>
+                <h3>📡 Channels (81)</h3>
                 <div class="search-wrap">
                     <span class="s-icon">🔍</span>
                     <input type="text" id="searchInput" placeholder="চ্যানেল খুঁজুন...">
@@ -873,7 +873,7 @@
                     const q = searchQuery.toLowerCase();
                     filtered = filtered.filter(ch => ch.name.toLowerCase().includes(q) || ch.cat.toLowerCase().includes(q));
                 }
-                if (filtered.length === 0) { noResults.style.display = 'block'; document.querySelector('.sidebar-head h3').textContent = '📡 চ্যানেল (0)'; return; }
+                if (filtered.length === 0) { noResults.style.display = 'block'; document.querySelector('.sidebar-head h3').textContent = '📡 Channels (0)'; return; }
                 filtered.forEach((ch, index) => {
                     const div = document.createElement('div');
                     div.className = 'ch-item';
@@ -885,7 +885,7 @@
                     div.addEventListener('click', () => selectChannel(ch));
                     channelList.insertBefore(div, noResults);
                 });
-                document.querySelector('.sidebar-head h3').textContent = `📡 চ্যানেল (${filtered.length})`;
+                document.querySelector('.sidebar-head h3').textContent = `📡 Channels (${filtered.length})`;
             }
 
             function selectChannel(ch) {
