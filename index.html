@@ -893,7 +893,7 @@
 
             let currentFailbackIndex = 0;
             let failbackTimeout = null;
-            const FAILBACK_DELAY = 6000;
+            const FAILBACK_DELAY = 4000;
             const failbackNotice = document.getElementById('failbackNotice');
 
             function showFailbackNotice(serverName) {
@@ -1112,9 +1112,9 @@
             renderChannels('FIFA World Cup', '');
             setupHls(currentStreamUrl);
             updateMuteBtn(); updatePlayBtn();
-            console.log('🚀 GO TVS Ready | Simple Failback | 4 Servers | Click-to-Pause ✅');
-            console.log('📺 Server 1 → Server 2 → Server 3 → Server 4 → STOP');
-            console.log('🔄 Failback Timeout: ' + (FAILBACK_DELAY/1000) + ' seconds');
+            console.log('🚀 GO TVS Ready | Click-to-Pause ✅');
+            // console.log('📺 Server 1 → Server 2 → Server 3 → Server 4 → STOP');
+            // console.log('🔄 Failback Timeout: ' + (FAILBACK_DELAY/1000) + ' seconds');
         })();
     </script>
 </body>
